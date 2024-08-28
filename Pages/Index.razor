@@ -1,0 +1,130 @@
+﻿@page "/"
+@layout MainLayout
+
+<PageTitle>ToDo List</PageTitle>
+
+<div class="alert alert-primary text-center" role="alert">
+    <h1>* My Upgraded To-Do List *</h1>
+</div>
+
+<div style="border: 2px solid Green;" class="p-5 mb-5">
+    <EditForm Model="@ToBeAdded" OnValidSubmit="ValidationSubmit">
+        <div class="mb-3">
+            <label for="TaskInput" class="form-label">Task Title</label>
+            <InputText class="form-control" id="TaskInput" @bind-Value="ToBeAdded.Name" aria-describedby="TaskInputField" />
+            <div id="TaskInputField" class="form-text">Enter Task Name Here.</div>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </EditForm>
+</div>
+
+<div class="alert alert-secondary text-center mt-4" role="alert">
+    <h2>* Ongoing Tasks *</h2>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Task</th>
+            <th scope="col">Action</th>
+            <th scope="col"></th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var task in tasks.Where(t => !t.IsDone))
+        {
+            <tr class="table-danger">
+                <td>@task.Name</td>
+                <td>
+                    <button @onclick="@(() => UpdateTask(task))" class="btn btn-success">
+                        Done
+                    </button>
+                </td>
+                <td>
+                    <button @onclick="@(() => Delete(task))" class="btn btn-danger">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="alert alert-secondary text-center mt-4" role="alert">
+    <h2>* Completed Tasks *</h2>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Task</th>
+            <th scope="col">Action</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var task in tasks.Where(t => t.IsDone))
+        {
+            <tr class="table-success">
+                <td>@task.Name</td>
+                <td>
+                    <button @onclick="@(() => TaskUndo(task))" class="btn btn-warning">
+                        Undo
+                    </button>
+                </td>
+                <td>
+                    <button @onclick="@(() => Delete(task))" class="btn btn-danger">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    ToDo ToBeAdded = new();
+    List<ToDo> tasks = new();
+    ToDoContext db = new();
+
+    protected override void OnInitialized()
+    {
+        tasks = db.Tasks.ToList();
+        base.OnInitialized();
+    }
+
+    void UpdateTask(ToDo task)
+    {
+        task.IsDone = true;
+        db.SaveChanges();
+        tasks = db.Tasks.ToList();
+    }
+
+    void ValidationSubmit()
+    {
+        db.Tasks.Add(ToBeAdded);
+        db.SaveChanges();
+        ToBeAdded = new();
+        tasks = db.Tasks.ToList();
+    }
+
+    void Delete(ToDo task)
+    {
+        db.Tasks.Remove(task);
+        db.SaveChanges();
+        tasks = db.Tasks.ToList();
+    }
+
+    void TaskUndo(ToDo task)
+    {
+        task.IsDone = false;
+        db.SaveChanges();
+        tasks = db.Tasks.ToList();
+    }
+
+    public void Dispose()
+    {
+        db?.Dispose();
+    }
+}
