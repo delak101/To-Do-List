@@ -43,12 +43,10 @@ To run this project locally, follow these steps:
 4. **Apply database migrations**:
 
    ```bash
-   Copy code
    dotnet ef database update
    ```
 5. **Run the application**:
    ```bash
-   Copy code
    dotnet run
    ```
 
