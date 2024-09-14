@@ -67,4 +67,4 @@ To run this project locally, follow these steps:
   4. Push to the branch (git push origin feature/your-feature-name).
   5. Open a Pull Request.
 
-![image](https://github.com/user-attachments/assets/13046057-d32f-49e8-bac8-46b76e52cf6a)
+![image](https://github.com/delak101/To-Do-List/blob/1f976381ab8066f4b7fc264cacab88055684768a/todolist.png)
